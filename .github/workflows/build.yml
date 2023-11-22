@@ -25,7 +25,10 @@ jobs:
         curl -o $HOME/tmp/apache-maven-3.9.5-bin.tar.gz https://dlcdn.apache.org/maven/maven-3/3.9.5/binaries/apache-maven-3.9.5-bin.tar.gz
         cd $HOME/tmp
         tar xzvf apache-maven-3.9.5-bin.tar.gz
-        echo "$HOME/tmp/apache-maven-3.9.5/" >> $GITHUB_PATH
+        echo "$HOME/tmp/apache-maven-3.9.5/bin" >> $GITHUB_PATH
+    - id: print-maven-version
+      name: Print Maven version
+      run: mvn -v
     - id: build
       name: Build
       run: mvn install
