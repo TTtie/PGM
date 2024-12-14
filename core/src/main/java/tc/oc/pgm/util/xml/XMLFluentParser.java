@@ -1,6 +1,7 @@
 package tc.oc.pgm.util.xml;
 
 import java.time.Duration;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.util.BlockVector;
 import org.bukkit.util.Vector;
@@ -180,6 +181,15 @@ public class XMLFluentParser {
       @Override
       protected Formula<T> parse(Node node) {
         return Formula.of(node.getValue(), variables.getContext(clazz));
+      }
+    };
+  }
+
+  public Builder.Generic<Component> formattedText(Element el, String... prop) {
+    return new Builder.Generic<>(el, prop) {
+      @Override
+      protected Component parse(Node node) throws InvalidXMLException {
+        return XMLUtils.parseFormattedText(node);
       }
     };
   }
