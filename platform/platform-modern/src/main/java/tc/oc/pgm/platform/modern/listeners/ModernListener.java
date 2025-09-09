@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameRule;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -18,11 +19,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPoseChangeEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
+import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import tc.oc.pgm.util.bukkit.BukkitUtils;
 import tc.oc.pgm.util.event.block.BlockFallEvent;
 import tc.oc.pgm.util.event.entity.EntityDespawnInVoidEvent;
+import tc.oc.pgm.util.event.entity.PgmLingeringPotionSplashEvent;
 import tc.oc.pgm.util.event.entity.PotionEffectAddEvent;
 import tc.oc.pgm.util.event.entity.PotionEffectRemoveEvent;
 import tc.oc.pgm.util.event.player.PlayerAttackEntityEvent;
@@ -104,6 +107,14 @@ public class ModernListener implements Listener {
   public void onPlayerTeleport(final PlayerTeleportEvent event) {
     switch (event.getCause()) {
       case NETHER_PORTAL, END_PORTAL -> event.setCancelled(true);
+    }
+  }
+
+  @EventHandler
+  public void onLingeringPotionSplash(LingeringPotionSplashEvent event) {
+    if (event.getAreaEffectCloud().getSource() instanceof Player player
+        && event.getEntity() instanceof ThrownPotion potion) {
+      new PgmLingeringPotionSplashEvent(event.getAreaEffectCloud(), potion, player).callEvent();
     }
   }
 }
