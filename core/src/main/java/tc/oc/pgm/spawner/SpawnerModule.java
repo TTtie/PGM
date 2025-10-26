@@ -10,7 +10,6 @@ import java.util.logging.Logger;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import tc.oc.pgm.api.filter.Filter;
@@ -20,11 +19,7 @@ import tc.oc.pgm.api.map.factory.MapModuleFactory;
 import tc.oc.pgm.api.match.Match;
 import tc.oc.pgm.api.region.Region;
 import tc.oc.pgm.filters.FilterModule;
-import tc.oc.pgm.filters.matcher.StaticFilter;
-import tc.oc.pgm.filters.parse.FilterParser;
-import tc.oc.pgm.kits.KitParser;
 import tc.oc.pgm.regions.RegionModule;
-import tc.oc.pgm.regions.RegionParser;
 import tc.oc.pgm.spawner.objects.SpawnableItem;
 import tc.oc.pgm.spawner.objects.SpawnablePotion;
 import tc.oc.pgm.util.material.MaterialData;
@@ -52,50 +47,53 @@ public class SpawnerModule implements MapModule<SpawnerMatchModule> {
     @Override
     public SpawnerModule parse(MapFactory factory, Logger logger, Document doc)
         throws InvalidXMLException {
+      var parser = factory.getParser();
       SpawnerModule spawnerModule = new SpawnerModule();
-      RegionParser regionParser = factory.getRegions();
-      KitParser kitParser = factory.getKits();
-      FilterParser filterParser = factory.getFilters();
       AtomicInteger spawnerIdSerial = new AtomicInteger(1);
 
       for (Element spawnerEl :
           XMLUtils.flattenElements(doc.getRootElement(), "spawners", "spawner")) {
         String id = spawnerEl.getAttributeValue("id");
-        Region spawnRegion = regionParser.parseRequiredRegionProperty(spawnerEl, "spawn-region");
-        Region playerRegion = regionParser.parseRequiredRegionProperty(spawnerEl, "player-region");
-        Attribute delayAttr = spawnerEl.getAttribute("delay");
-        Attribute minDelayAttr = spawnerEl.getAttribute("min-delay");
-        Attribute maxDelayAttr = spawnerEl.getAttribute("max-delay");
+        Region spawnRegion =
+            parser.region(spawnerEl, "spawn-region").randomPoints().required();
+        Region playerRegion = parser.region(spawnerEl, "player-region").required();
 
-        if (id == null) id = SpawnerDefinition.makeDefaultId(null, spawnerIdSerial);
+        var parsedMinDelay = parser.duration(spawnerEl, "min-delay").optional();
+        var parsedMaxDelay = parser.duration(spawnerEl, "max-delay").optional();
+        var delay = parser
+            .duration(spawnerEl, "delay")
+            .validate((dur, node) -> {
+              if (parsedMinDelay.isPresent() || parsedMaxDelay.isPresent()) {
+                throw new InvalidXMLException(
+                    "Attribute 'min-delay' and 'max-delay' cannot be combined with 'delay'",
+                    spawnerEl);
+              }
+            })
+            .optional(Duration.ofSeconds(10));
 
-        if ((minDelayAttr != null || maxDelayAttr != null) && delayAttr != null) {
-          throw new InvalidXMLException(
-              "Attribute 'minDelay' and 'maxDelay' cannot be combined with 'delay'", spawnerEl);
-        }
+        var effectiveMinDelay = parsedMinDelay.orElse(delay);
+        var effectiveMaxDelay = parsedMaxDelay.orElse(delay);
 
-        Duration delay = XMLUtils.parseDuration(delayAttr, Duration.ofSeconds(10));
-        Duration minDelay = XMLUtils.parseDuration(minDelayAttr, delay);
-        Duration maxDelay = XMLUtils.parseDuration(maxDelayAttr, delay);
-
-        if (maxDelay.compareTo(minDelay) <= 0 && minDelayAttr != null && maxDelayAttr != null) {
+        var comparisonResult = effectiveMaxDelay.compareTo(effectiveMinDelay);
+        if (comparisonResult < 0) {
           throw new InvalidXMLException("Max-delay must be longer than min-delay", spawnerEl);
         }
 
-        int maxEntities = XMLUtils.parseNumber(
-            spawnerEl.getAttribute("max-entities"), Integer.class, Integer.MAX_VALUE);
-        Filter playerFilter =
-            filterParser.parseFilterProperty(spawnerEl, "filter", StaticFilter.ALLOW);
+        if (id == null) id = SpawnerDefinition.makeDefaultId(null, spawnerIdSerial);
+
+        int maxEntities =
+            parser.parseInt(spawnerEl, "max-entities").attr().optional(Integer.MAX_VALUE);
+        Filter playerFilter = parser.filter(spawnerEl, "filter").orAllow();
 
         List<Spawnable> objects = new ArrayList<>();
         for (Element itemEl : XMLUtils.getChildren(spawnerEl, "item")) {
-          ItemStack stack = kitParser.parseItem(itemEl, false);
+          ItemStack stack = parser.item(itemEl).required();
           SpawnableItem item = new SpawnableItem(stack, id);
           objects.add(item);
         }
 
         for (Element potionEl : XMLUtils.getChildren(spawnerEl, "potion")) {
-          short dmg = XMLUtils.parseNumber(potionEl.getAttribute("damage"), Short.class, (short) 0);
+          short dmg = parser.parseShort(potionEl, "damage").attr().optional((short) 0);
           ItemStack potion =
               MaterialData.item(Material.POTION, (short) (dmg | SPLASH_BIT)).toItemStack(1);
           PotionMeta meta = (PotionMeta) potion.getItemMeta();
@@ -116,9 +114,8 @@ public class SpawnerModule implements MapModule<SpawnerMatchModule> {
             spawnRegion,
             playerRegion,
             playerFilter,
-            delay,
-            minDelay,
-            maxDelay,
+            effectiveMinDelay,
+            comparisonResult == 0 ? effectiveMinDelay : effectiveMaxDelay,
             maxEntities);
         factory.getFeatures().addFeature(spawnerEl, spawnerDefinition);
         spawnerModule.spawnerDefinitions.add(spawnerDefinition);

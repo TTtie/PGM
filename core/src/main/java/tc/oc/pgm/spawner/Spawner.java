@@ -61,7 +61,7 @@ public class Spawner implements Listener, Tickable {
 
   private void calculateDelay() {
     if (definition.minDelay == definition.maxDelay) {
-      currentDelay = TimeUtils.toTicks(definition.delay);
+      currentDelay = TimeUtils.toTicks(definition.minDelay);
     } else {
       long maxDelay = TimeUtils.toTicks(definition.maxDelay);
       long minDelay = TimeUtils.toTicks(definition.minDelay);

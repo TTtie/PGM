@@ -94,6 +94,10 @@ public class XMLFluentParser {
     return number(Double.class, el, prop);
   }
 
+  public NumberBuilder<Short> parseShort(Element el, String... prop) {
+    return number(Short.class, el, prop);
+  }
+
   public <T extends Number> NumberBuilder<T> number(Class<T> cls, Element el, String... prop) {
     return new NumberBuilder<>(cls, el, prop);
   }

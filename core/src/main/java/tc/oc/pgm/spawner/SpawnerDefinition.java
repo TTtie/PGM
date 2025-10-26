@@ -14,7 +14,7 @@ public class SpawnerDefinition extends SelfIdentifyingFeatureDefinition {
   public final Region spawnRegion;
   public final Region playerRegion;
   public final int maxEntities;
-  public final Duration minDelay, maxDelay, delay;
+  public final Duration minDelay, maxDelay;
   public final List<Spawnable> objects;
   public final Filter playerFilter;
 
@@ -24,7 +24,6 @@ public class SpawnerDefinition extends SelfIdentifyingFeatureDefinition {
       Region spawnRegion,
       Region playerRegion,
       Filter playerFilter,
-      Duration delay,
       Duration minDelay,
       Duration maxDelay,
       int maxEntities) {
@@ -34,7 +33,6 @@ public class SpawnerDefinition extends SelfIdentifyingFeatureDefinition {
     this.maxEntities = maxEntities;
     this.minDelay = minDelay;
     this.maxDelay = maxDelay;
-    this.delay = delay;
     this.objects = objects;
     this.playerFilter = playerFilter;
   }
