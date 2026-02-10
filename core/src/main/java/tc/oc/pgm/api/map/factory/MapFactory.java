@@ -1,5 +1,6 @@
 package tc.oc.pgm.api.map.factory;
 
+import org.jspecify.annotations.NullMarked;
 import tc.oc.pgm.api.map.MapContext;
 import tc.oc.pgm.api.map.MapInfo;
 import tc.oc.pgm.api.map.MapModule;
@@ -13,6 +14,7 @@ import tc.oc.pgm.util.Version;
 import tc.oc.pgm.util.xml.XMLFluentParser;
 
 /** A factory for creating {@link MapInfo}s and {@link MapContext}s. */
+@NullMarked
 public interface MapFactory extends ModuleContext<MapModule<?>>, AutoCloseable {
 
   /**
@@ -65,4 +67,12 @@ public interface MapFactory extends ModuleContext<MapModule<?>>, AutoCloseable {
    * @throws MapException If there was an error loading the context.
    */
   MapContext load() throws MapException;
+
+  /**
+   * Checks if the underlying map supports the given server version.
+   *
+   * @param version The version to check.
+   * @return Whether the map supports the given version.
+   */
+  boolean supportsVersion(Version version);
 }

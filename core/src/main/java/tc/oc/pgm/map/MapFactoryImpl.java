@@ -9,6 +9,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jdom2.Document;
 import org.jdom2.input.JDOMParseException;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import tc.oc.pgm.api.Modules;
 import tc.oc.pgm.api.PGM;
 import tc.oc.pgm.api.map.MapContext;
@@ -68,7 +70,8 @@ public class MapFactoryImpl extends ModuleGraph<MapModule<?>, MapModuleFactory<?
   }
 
   @Override
-  protected MapModule<?> createModule(MapModuleFactory<?> factory) throws ModuleLoadException {
+  protected @Nullable MapModule<?> createModule(MapModuleFactory<?> factory)
+      throws ModuleLoadException {
     try {
       return factory.parse(this, logger, document);
     } catch (InvalidXMLException e) {
@@ -77,7 +80,7 @@ public class MapFactoryImpl extends ModuleGraph<MapModule<?>, MapModuleFactory<?
   }
 
   @Override
-  public MapContext load() throws MapException {
+  public @NonNull MapContext load() throws MapException {
     try {
       document = MapFilePreprocessor.getDocument(source, includes);
 
@@ -117,6 +120,14 @@ public class MapFactoryImpl extends ModuleGraph<MapModule<?>, MapModuleFactory<?
     return new MapContextImpl(info, getModules());
   }
 
+  @Override
+  public boolean supportsVersion(@NonNull Version version) {
+    if (info == null) {
+      throw new IllegalStateException("Tried to check map version before info was loaded");
+    }
+    return info.getServerVersions().contains(version);
+  }
+
   private void postLoad() throws InvalidXMLException {
     for (InvalidXMLException e : getFeatures().resolveReferences()) {
       throw e;
@@ -137,7 +148,7 @@ public class MapFactoryImpl extends ModuleGraph<MapModule<?>, MapModuleFactory<?
   }
 
   @Override
-  public Version getProto() {
+  public @NonNull Version getProto() {
     if (info == null) {
       throw new IllegalStateException("Tried to access map proto before info was loaded");
     }
@@ -149,7 +160,7 @@ public class MapFactoryImpl extends ModuleGraph<MapModule<?>, MapModuleFactory<?
   }
 
   @Override
-  public XMLFluentParser getParser() {
+  public @NonNull XMLFluentParser getParser() {
     if (parser == null) {
       parser = new XMLFluentParser(this);
       // Calling init will cause more calls to getParser, that's why we need them separate
@@ -159,7 +170,7 @@ public class MapFactoryImpl extends ModuleGraph<MapModule<?>, MapModuleFactory<?
   }
 
   @Override
-  public RegionParser getRegions() {
+  public @NonNull RegionParser getRegions() {
     if (regions == null) {
       regions = isLegacy() ? new LegacyRegionParser(this) : new FeatureRegionParser(this);
     }
@@ -167,7 +178,7 @@ public class MapFactoryImpl extends ModuleGraph<MapModule<?>, MapModuleFactory<?
   }
 
   @Override
-  public FilterParser getFilters() {
+  public @NonNull FilterParser getFilters() {
     if (filters == null) {
       filters = isLegacy() ? new LegacyFilterParser(this) : new FeatureFilterParser(this);
     }
@@ -175,7 +186,7 @@ public class MapFactoryImpl extends ModuleGraph<MapModule<?>, MapModuleFactory<?
   }
 
   @Override
-  public KitParser getKits() {
+  public @NonNull KitParser getKits() {
     if (kits == null) {
       kits = isLegacy() ? new LegacyKitParser(this) : new FeatureKitParser(this);
     }
@@ -183,7 +194,7 @@ public class MapFactoryImpl extends ModuleGraph<MapModule<?>, MapModuleFactory<?
   }
 
   @Override
-  public FeatureDefinitionContext getFeatures() {
+  public @NonNull FeatureDefinitionContext getFeatures() {
     if (features == null) {
       features = new FeatureDefinitionContext();
     }
