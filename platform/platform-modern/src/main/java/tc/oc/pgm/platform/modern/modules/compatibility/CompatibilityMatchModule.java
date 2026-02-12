@@ -25,12 +25,17 @@ public class CompatibilityMatchModule implements MatchModule, Listener {
     this.options = options;
   }
 
+  public CompatibilityOptions getOptions() {
+    return options;
+  }
+
   @Override
   public void load() throws ModuleLoadException {
     var nmsWorld = ((CraftWorld) match.getWorld()).getHandle();
     var paperConfig = nmsWorld.paperConfig();
     paperConfig.misc.disableRelativeProjectileVelocity = !options.relativeProjectileVelocity();
     paperConfig.fixes.preventTntFromMovingInWater = !options.tntMovesInWater();
+    paperConfig.misc.invertEntityCollisionOrder = options.invertEntityCollisionOrder();
   }
 
   @EventHandler(priority = EventPriority.LOWEST)

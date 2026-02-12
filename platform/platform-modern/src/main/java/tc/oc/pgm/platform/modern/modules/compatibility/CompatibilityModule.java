@@ -35,6 +35,7 @@ public class CompatibilityModule implements MapModule<CompatibilityMatchModule> 
       boolean relativeProjectileVelocity = !factory.supportsVersion(VERSION_1_8_8);
       boolean randomTntOffset = false;
       boolean tntMovesInWater = false;
+      boolean invertCollisionOrder = true;
 
       for (var element : doc.getRootElement().getChildren("compatibility")) {
         relativeProjectileVelocity = parser
@@ -45,10 +46,14 @@ public class CompatibilityModule implements MapModule<CompatibilityMatchModule> 
             parser.parseBool(element, "random-tnt-offset").child().optional(randomTntOffset);
         tntMovesInWater =
             parser.parseBool(element, "tnt-moves-in-water").child().optional(tntMovesInWater);
+        invertCollisionOrder = parser
+            .parseBool(element, "invert-entity-collision-order")
+            .child()
+            .optional(invertCollisionOrder);
       }
 
-      return new CompatibilityModule(
-          new CompatibilityOptions(relativeProjectileVelocity, randomTntOffset, tntMovesInWater));
+      return new CompatibilityModule(new CompatibilityOptions(
+          relativeProjectileVelocity, randomTntOffset, tntMovesInWater, invertCollisionOrder));
     }
   }
 }
