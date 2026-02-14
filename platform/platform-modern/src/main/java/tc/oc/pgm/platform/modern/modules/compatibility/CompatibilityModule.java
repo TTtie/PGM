@@ -14,7 +14,7 @@ import tc.oc.pgm.util.xml.InvalidXMLException;
 
 @NullMarked
 public class CompatibilityModule implements MapModule<CompatibilityMatchModule> {
-  private static final Version VERSION_1_8_8 = new Version(1, 8, 8);
+  protected static final Version VERSION_1_8_8 = new Version(1, 8, 8);
   private final CompatibilityOptions options;
 
   private CompatibilityModule(CompatibilityOptions options) {
@@ -31,8 +31,9 @@ public class CompatibilityModule implements MapModule<CompatibilityMatchModule> 
     @Override
     public @Nullable CompatibilityModule parse(MapFactory factory, Logger logger, Document doc)
         throws InvalidXMLException {
+      final var isLegacy = factory.supportsVersion(VERSION_1_8_8);
       var parser = factory.getParser();
-      boolean relativeProjectileVelocity = !factory.supportsVersion(VERSION_1_8_8);
+      boolean relativeProjectileVelocity = !isLegacy;
       boolean randomTntOffset = false;
       boolean tntMovesInWater = false;
       boolean invertCollisionOrder = true;

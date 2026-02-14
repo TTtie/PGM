@@ -14,4 +14,9 @@ public record CompatibilityOptions(
     boolean relativeProjectileVelocity,
     boolean randomTntOffset,
     boolean tntMovesInWater,
-    boolean invertEntityCollisionOrder) {}
+    boolean invertEntityCollisionOrder) {
+
+  public static CompatibilityOptions defaultOptions(boolean isLegacy) {
+    return new CompatibilityOptions(!isLegacy, false, false, true);
+  }
+}
