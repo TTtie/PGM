@@ -57,6 +57,7 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.generator.CraftWorldInfo;
+import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
@@ -70,6 +71,7 @@ import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.generator.WorldInfo;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.Plugin;
@@ -447,5 +449,14 @@ public class ModernNMSHacks implements NMSHacks {
   @Override
   public int allocateEntityId() {
     return Bukkit.getUnsafe().nextEntityId();
+  }
+
+  @Override
+  public int getRawInventoryViewSlotAmount(InventoryView view) {
+    if (view instanceof CraftInventoryView<?, ?> craftView) {
+      return craftView.getHandle().slots.size();
+    } else {
+      return view.countSlots();
+    }
   }
 }

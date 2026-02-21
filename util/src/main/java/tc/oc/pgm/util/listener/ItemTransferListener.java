@@ -1,5 +1,7 @@
 package tc.oc.pgm.util.listener;
 
+import static tc.oc.pgm.util.nms.NMSHacks.NMS_HACKS;
+
 import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -12,7 +14,6 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.CraftingInventory;
@@ -493,7 +494,7 @@ public class ItemTransferListener implements Listener {
       ItemStack cursor = event.getCursor().clone();
       var view = event.getView();
       var topInventory = view.getTopInventory();
-      int totalSize = getViewSize(view, topInventory);
+      int totalSize = NMS_HACKS.getRawInventoryViewSlotAmount(view);
 
       for (int pass = 0; pass < 2; pass++) {
         for (int rawSlot = 0; rawSlot < totalSize; rawSlot++) {
@@ -551,15 +552,6 @@ public class ItemTransferListener implements Listener {
       view.setCursor(cursor);
       player.updateInventory();
     }
-  }
-
-  private int getViewSize(InventoryView view, Inventory top) {
-    // Modern view.countSlots() sums all slots (including armor & offhand), which out-of-bounds if
-    // you try to later try to view.getItem(slot) with the highest numbers as they're not part of
-    // the view. As a workaround, only use countSlots() when in the player's view (ie: the 2x2
-    // Crafting view), otherwise hard-code the 36 slots of 9x4.
-    if (top.getType().equals(InventoryType.CRAFTING)) return view.countSlots();
-    return top.getSize() + 36;
   }
 
   @EventHandler(ignoreCancelled = true)

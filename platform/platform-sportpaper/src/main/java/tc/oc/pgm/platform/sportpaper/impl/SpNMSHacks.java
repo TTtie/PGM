@@ -31,6 +31,7 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftFireball;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftFirework;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftItem;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftInventoryView;
 import org.bukkit.craftbukkit.v1_8_R3.util.CraftMagicNumbers;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
@@ -39,6 +40,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.Plugin;
@@ -228,5 +230,14 @@ public class SpNMSHacks implements NMSHacks {
   @Override
   public int allocateEntityId() {
     return Bukkit.allocateEntityId();
+  }
+
+  @Override
+  public int getRawInventoryViewSlotAmount(InventoryView view) {
+    if (view instanceof CraftInventoryView craftView) {
+      return craftView.getHandle().c.size();
+    } else {
+      return view.countSlots();
+    }
   }
 }
