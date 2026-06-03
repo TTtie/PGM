@@ -64,7 +64,7 @@ class ConditionalChecker {
 
   private static boolean maxServerVersion(MapFilePreprocessor ctx, Element el, Node node)
       throws InvalidXMLException {
-    return Platform.MINECRAFT_VERSION.isNoNewerThan(XMLUtils.parseSemanticVersion(node));
+    return Platform.MINECRAFT_VERSION.isNoNewerThan(XMLUtils.parseSemanticVersion(node, true));
   }
 
   private static boolean constant(MapFilePreprocessor ctx, Element el, Node node)
@@ -108,8 +108,9 @@ class ConditionalChecker {
         case EQUALS -> Objects.equals(value.getValue(), constant);
         case CONTAINS -> Set.of(split(value.getValue())).contains(constant);
         case REGEX -> constant.matches(value.getValue());
-        case RANGE -> XMLUtils.parseNumericRange(value, Double.class)
-            .contains(XMLUtils.parseNumber(new Node(el), constant, Double.class, true));
+        case RANGE ->
+          XMLUtils.parseNumericRange(value, Double.class)
+              .contains(XMLUtils.parseNumber(new Node(el), constant, Double.class, true));
         default -> throw new IllegalStateException("Unexpected value: " + cmp);
       };
     }

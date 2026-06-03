@@ -289,9 +289,27 @@ public final class TextParser {
    * @param range A range of acceptable versions.
    * @return A version.
    * @throws TextException If the text is invalid or out of range.
+   * @see #parseVersion(String, Range, boolean) for a variant that should be treated as parsing the
+   *     upper bound.
    */
   public static Version parseVersion(String text, Range<Version> range) throws TextException {
+    return parseVersion(text, range, false);
+  }
+
+  /**
+   * Parses text into an semantic version.
+   *
+   * @param text The text.
+   * @param range A range of acceptable versions.
+   * @param isUpperBound Controls whether to parse the version as an upper bound. If true, missing
+   *     version components will be treated as Integer.MAX_VALUE
+   * @return A version.
+   * @throws TextException If the text is invalid or out of range.
+   */
+  public static Version parseVersion(String text, Range<Version> range, boolean isUpperBound)
+      throws TextException {
     assertNotNull(text, "cannot parse version from null");
+    final int fill = isUpperBound ? Integer.MAX_VALUE : 0;
 
     final String[] components = DOT.split(text, 3);
     final int size = components.length;
@@ -301,8 +319,8 @@ public final class TextParser {
     }
 
     final int major = parseInteger(components[0], NONNEG);
-    final int minor = size < 2 ? 0 : parseInteger(components[1], NONNEG);
-    final int patch = size < 3 ? 0 : parseInteger(components[2], NONNEG);
+    final int minor = size < 2 ? fill : parseInteger(components[1], NONNEG);
+    final int patch = size < 3 ? fill : parseInteger(components[2], NONNEG);
 
     final Version version = new Version(major, minor, patch);
 

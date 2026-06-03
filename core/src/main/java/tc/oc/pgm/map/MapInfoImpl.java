@@ -425,7 +425,7 @@ public class MapInfoImpl implements MapInfo {
       this.serverVersions = XMLUtils.parseClosedRange(
           fallback(minVer, maxVer),
           parseOrInferMinimumVersion(source, minVer),
-          XMLUtils.parseSemanticVersion(maxVer));
+          XMLUtils.parseSemanticVersion(maxVer, true));
     }
 
     static <T> T fallback(T obj, T fallback) {

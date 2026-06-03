@@ -1095,10 +1095,15 @@ public final class XMLUtils {
   }
 
   public static Version parseSemanticVersion(Node node) throws InvalidXMLException {
+    return parseSemanticVersion(node, false);
+  }
+
+  public static Version parseSemanticVersion(Node node, boolean isUpperBound)
+      throws InvalidXMLException {
     if (node == null) return null;
 
     try {
-      return TextParser.parseVersion(node.getValueNormalize());
+      return TextParser.parseVersion(node.getValueNormalize(), null, isUpperBound);
     } catch (TextException e) {
       throw new InvalidXMLException(node, e);
     }
