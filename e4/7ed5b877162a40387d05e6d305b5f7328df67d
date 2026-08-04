@@ -1,0 +1,14 @@
+platform/platform-sportpaper/src/main/java/tc/oc/pgm/platform/sportpaper/impl/SpMinecraftTranslator.java
+  h_a954843f2693a3 32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "e47ed5b877162a40387d05e6d305b5f7328df67d",
+  "prompts": {},
+  "humans": {
+    "h_a954843f2693a3": {
+      "author": "TTtie <me@tttie.cz>"
+    }
+  }
+}
