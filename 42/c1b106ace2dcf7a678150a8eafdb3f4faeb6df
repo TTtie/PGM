@@ -1,0 +1,15 @@
+core/src/main/java/tc/oc/pgm/scoreboard/SidebarRenderer.java
+  h_a954843f2693a3 41,144,149,151-152,156-157
+  h_a954843f2693a3 142
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "42c1b106ace2dcf7a678150a8eafdb3f4faeb6df",
+  "prompts": {},
+  "humans": {
+    "h_a954843f2693a3": {
+      "author": "TTtie <me@tttie.cz>"
+    }
+  }
+}
