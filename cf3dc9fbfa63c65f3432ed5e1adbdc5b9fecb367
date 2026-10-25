@@ -1,0 +1,50 @@
+core/src/main/java/tc/oc/pgm/damage/DamageMatchModule.java
+  h_a954843f2693a3 191
+platform/platform-modern/src/main/java/tc/oc/pgm/platform/modern/modules/ModernEventFilterMatchModule.java
+  h_a954843f2693a3 77
+  s_9478b41064fba6::t_002510b5045984 78
+  s_9478b41064fba6::t_4fb29fb8ba7bdf 80
+  s_9478b41064fba6::t_c20724a8822daf 79
+  s_9478b41064fba6::t_f9c3217d473213 81-82
+  h_a954843f2693a3 5,76
+platform/platform-modern/src/main/java/tc/oc/pgm/platform/modern/modules/damage/ModernDamageMatchModule.java
+  s_ed4134e338db07::t_49726b63a03998 86
+  s_ed4134e338db07::t_1e9ff9fe965f51 78-79,82-85,87-90,93-94
+  h_a954843f2693a3 3,6,74-75
+  s_ed4134e338db07::t_bd69ab8553d734 92
+  s_ed4134e338db07::t_7c6aa1957082ff 76
+  s_ed4134e338db07::t_2e845ff803e17a 77
+  s_ed4134e338db07::t_03ffff137cef92 80-81
+  s_ed4134e338db07::t_9c4a331ef31a81 91
+  s_ed4134e338db07::t_ba718c6f5404d3 95
+  h_a954843f2693a3 11,23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "cf3dc9fbfa63c65f3432ed5e1adbdc5b9fecb367",
+  "prompts": {},
+  "humans": {
+    "h_a954843f2693a3": {
+      "author": "TTtie <me@tttie.cz>"
+    }
+  },
+  "sessions": {
+    "s_9478b41064fba6": {
+      "agent_id": {
+        "tool": "github-copilot-jetbrains",
+        "id": "1789497334244",
+        "model": "unknown"
+      },
+      "human_author": "TTtie <me@tttie.cz>"
+    },
+    "s_ed4134e338db07": {
+      "agent_id": {
+        "tool": "github-copilot-jetbrains",
+        "id": "1789475254377",
+        "model": "unknown"
+      },
+      "human_author": "TTtie <me@tttie.cz>"
+    }
+  }
+}
