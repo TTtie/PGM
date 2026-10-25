@@ -38,7 +38,7 @@ import tc.oc.pgm.wool.MonumentWool;
 
 class SidebarRenderer {
 
-  public static final int MAX_ROWS = 16; // Max rows on the scoreboard
+  public static final int MAX_ROWS = 15; // Max rows on the scoreboard
   public static final int MAX_LENGTH = 30; // Max characters per line allowed
   public static final int MAX_TITLE = 32; // Max characters allowed in title
 
@@ -139,15 +139,22 @@ class SidebarRenderer {
 
     if (context.hasScores) {
       var smm = assertNotNull(context.smm);
+      var viewerIsCompetitor = context.viewer instanceof Competitor;
       int limit = smm.hasScoreLimit() ? smm.getScoreLimit() : -1;
+      boolean renderedSelf = false;
 
       for (Competitor competitor : match.getSortedCompetitors()) {
         if (!smm.getScoreboardFilter().response(competitor)) continue;
         context.addRow(context.display.format(competitor, (int) smm.getScore(competitor), limit));
+        renderedSelf |= competitor == context.viewer;
 
+        // Always reserve a spot for the viewer
+        if (!renderedSelf && viewerIsCompetitor && context.size() >= MAX_ROWS - 1) break;
         // No point rendering more scores, usually seen in FFA
         if (context.isFull()) break;
       }
+      if (!renderedSelf && context.viewer instanceof Competitor comp)
+        context.addRow(context.display.format(comp, (int) smm.getScore(comp), limit));
     } else {
       for (Competitor competitor : match.getSortedCompetitors()) {
         Component text = renderBlitz(competitor);
